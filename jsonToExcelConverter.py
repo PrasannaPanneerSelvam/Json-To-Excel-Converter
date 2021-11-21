@@ -304,9 +304,9 @@ def ExcelFileWriter(work_book: Workbook, excel_sheet_number: int, json_list: lis
     return sheet_name
 
 
-def JsonToExcelWriter(input_json_file_name: str, output_excel_file_name: str) -> None:
+def JsonToExcelWriter(file_data: dict) -> bool:
 
-    def ReadJsonFromFile(location : str) -> dict:
+    def ReadJsonFromFile(location: str) -> dict:
         """ Reads and loads a json file and returns in the form of a dictionary """
         try:
             parsed_json = None
@@ -314,14 +314,21 @@ def JsonToExcelWriter(input_json_file_name: str, output_excel_file_name: str) ->
                 json_string = json_file.read()
             parsed_json = loads(json_string)
         except OSError:
-            print('Error during reading file :- ' + location)
+            print(f'Error during reading file :- {location}')
         except:
             print('Error during parsing json')
 
         return parsed_json
 
 
-    loaded_json = ReadJsonFromFile(input_json_file_name)
+    keys = ['inputFileName', 'outputFileName', 'jsonData']
+    input_file_name, output_file_name, json_data = [ file_data.get(key) for key in keys ]
+
+    match json_data, input_file_name:
+        case None, input_json_file_name:
+            loaded_json = ReadJsonFromFile(input_json_file_name)
+        case _, _:
+            loaded_json = json_data
 
     # Check :- is None
     if not loaded_json:
@@ -331,16 +338,18 @@ def JsonToExcelWriter(input_json_file_name: str, output_excel_file_name: str) ->
         loaded_json = [ loaded_json ]
 
     excel_sheet_number = 1
-    work_book = Workbook(output_excel_file_name)
+    work_book = Workbook(output_file_name)
     
     ExcelFileWriter(work_book, excel_sheet_number, loaded_json)
 
     work_book.close()
+    
+    return True
 
 
 if __name__ == "__main__":
 
-    input_directory_path  = 'input'
+    input_directory_path = 'input'
     output_directory_path = 'output'
 
     try:
@@ -351,8 +360,14 @@ if __name__ == "__main__":
 
     else:
         for file in os.listdir(input_directory_path):
-            # Process only json format files
-            if file.endswith('.json'):
-                output_excel_file_name = output_directory_path+ '/' + file.split('.json')[0] + '.xlsx'
-                JsonToExcelWriter(file, output_excel_file_name)
+            # Process only json format files and not expecting a file name with '.json' as a part of name
+            match file.split('.json'):
+                case [file_name, '']:
+                    JsonToExcelWriter(
+                        { 'inputFileName': f'{input_directory_path}/{file}'
+                        , 'outputFileName': f'{output_directory_path}/{file_name}.xlsx'
+                        }
+                    )
+                case _:
+                    pass
                 
