@@ -115,7 +115,7 @@ def NumToExcelAlpha(column_number: int) -> str:
 
 
 def GetDefaultCellFormat(work_book: Workbook) -> Format:
-    if not Workbook:
+    if not work_book:
         return None
     
     format_dict = { 
@@ -283,12 +283,20 @@ def ExcelFileWriter(work_book: Workbook, excel_sheet_number: int, json_list: lis
     # Writing details in respective cells
     for row_number, current_item in enumerate(json_list):
 
-        values = [ GetValueFromPath(current_item, path_array_element, len(path_array_element)) for path_array_element in path_array ]
+        values = [ 
+            GetValueFromPath(current_item, path_array_element, len(path_array_element)) 
+            for path_array_element in path_array
+        ]
 
-        # I miss the pure functional programming language's syntax here 😩
-        column_max_space_current_row = DetailsWriter(work_book, work_sheet, excel_sheet_number, row_number+header_rows, values)
+        column_max_space_current_row = DetailsWriter(
+            work_book,
+            work_sheet,
+            excel_sheet_number,
+            row_number + header_rows,
+            values
+        )
 
-        column_max_space = list( map (max, zip(column_max_space, column_max_space_current_row) ) )
+        column_max_space = map (max, zip(column_max_space, column_max_space_current_row) )
 
 
     # Setting column width based on the maximum space required by the cell with maximum number of characters
@@ -363,11 +371,22 @@ if __name__ == "__main__":
             # Process only json format files and not expecting a file name with '.json' as a part of name
             match file.split('.json'):
                 case [file_name, '']:
-                    JsonToExcelWriter(
-                        { 'inputFileName': f'{input_directory_path}/{file}'
-                        , 'outputFileName': f'{output_directory_path}/{file_name}.xlsx'
-                        }
-                    )
+                    try:
+                        JsonToExcelWriter(
+                            { 'inputFileName': f'{input_directory_path}/{file}'
+                            , 'outputFileName': f'{output_directory_path}/{file_name}.xlsx'
+                            }
+                        )
+                    except Exception as e:
+                        print('Error on processing', file_name)
+                        pass
                 case _:
                     pass
                 
+
+    # fileName = 'test3'
+    # JsonToExcelWriter(
+    #     { 'inputFileName': f'{input_directory_path}/{fileName}.json'
+    #     , 'outputFileName': f'{output_directory_path}/{fileName}.xlsx'
+    #     }
+    # )

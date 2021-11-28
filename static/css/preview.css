@@ -1,0 +1,47 @@
+:root {
+  --primary-header-color: #f00;
+  --secondary-header-color: #ff0;
+  --tertiary-header-color: #0f0;
+}
+
+.container {
+  display: inline-block;
+  height: 70%;
+  background-color: blueviolet;
+}
+
+#sheet-grid-container {
+  background-color: aqua;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 20px 20px;
+      grid-template-columns: 20px 20px;
+  grid-auto-rows: minmax(20px, auto);
+}
+
+.header-elem {
+  padding: 2px;
+  border: 0.25px solid black;
+}
+
+.header-row-0 {
+  background-color: var(--primary-header-color);
+}
+
+.header-row-1 {
+  background-color: var(--secondary-header-color);
+}
+
+.header-row-2 {
+  background-color: var(--tertiary-header-color);
+}
+
+.content-cell {
+  padding: 2px;
+  border: 0.25px solid #222;
+}
+
+.content-col-0 {
+  background-color: #eee;
+}
+/*# sourceMappingURL=preview.css.map */

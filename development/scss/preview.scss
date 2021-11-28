@@ -1,0 +1,43 @@
+:root {
+  --primary-header-color: #f00;
+  --secondary-header-color: #ff0;
+  --tertiary-header-color: #0f0;
+}
+
+.container {
+  display: inline-block;
+  height: 70%;
+  background-color: blueviolet;
+}
+
+#sheet-grid-container {
+  background-color: aqua;
+
+  display: grid;
+  grid-template-columns: 20px 20px;
+  grid-auto-rows: minmax(20px, auto);
+}
+
+.header-elem {
+  padding: 2px;
+  border: 0.25px solid black;
+}
+
+$header-colors: --primary-header-color, --secondary-header-color,
+  --tertiary-header-color;
+
+@each $current-color in $header-colors {
+  $idx: index($header-colors, $current-color) - 1;
+  .header-row-#{$idx} {
+    background-color: var($current-color);
+  }
+}
+
+.content-cell {
+  padding: 2px;
+  border: 0.25px solid #222;
+}
+
+.content-col-0 {
+  background-color: #eee;
+}

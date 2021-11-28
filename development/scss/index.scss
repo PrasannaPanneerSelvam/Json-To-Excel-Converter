@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+#json-form {
+  width: 70vw;
+  height: 70vh;
+  background-color: aqua;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+
+  textarea {
+    flex: 1;
+  }
+}
