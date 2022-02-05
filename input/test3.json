@@ -1,0 +1,41 @@
+[
+  {
+    "Name": "Student1",
+    "Marks": { "sub1": 100, "sub2": 100, "sub3": 100, "sub4": 100 },
+    "Address": {
+      "street": "126 Udhna",
+      "city": "san jone",
+      "state": "CA",
+      "phone": "394221"
+    },
+    "SampleList": "[]",
+    "SampleList1": "[1,2,3]",
+    "SampleList2": ["First element", 2, 3.0],
+    "SampleList3": [
+      { "Staff Name": "Bruce", "Subject": "Biochemistry" },
+      { "Staff Name": "Tony", "Subject": "Physics & Mechanics" }
+    ]
+  },
+
+  {
+    "Name": "Student2",
+    "Marks": { "sub1": 99, "sub2": 99, "sub3": 99, "sub4": 99 },
+    "Address": {
+      "street": "126 Kidhana",
+      "city": "New york",
+      "state": "PS",
+      "phone": "098765"
+    }
+  },
+
+  {
+    "Name": "Student3",
+    "Marks": { "sub1": 35, "sub2": 36, "sub3": 37 },
+    "Address": {
+      "street": "126 Kedar",
+      "city": "Blore",
+      "state": "SP",
+      "phone": "234567"
+    }
+  }
+]
