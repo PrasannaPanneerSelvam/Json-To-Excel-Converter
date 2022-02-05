@@ -3,7 +3,7 @@ import * as TablePreviewDomManipulator from './TablePreviewDomManipulator.js';
 
 // TODO :: Remove this counter & add proper logic based on level, row & column
 let dummyCounter = 0;
-function getTableId(row, col, level) {
+function getTableId(level, row, col) {
   return dummyCounter++;
 }
 
@@ -11,36 +11,36 @@ function getTableId(row, col, level) {
 let previewContainer = document.getElementById('preview-container'),
   layoutsArray = [];
 
-function removeTables() {
-  [...previewContainer.children].forEach(i => previewContainer.removeChild(i));
-}
+function createSpaceForTable(tableId, maxPartitions) {
+  // Table Header
+  const tableHeader = document.createElement('div');
+  tableHeader.classList.add('table-header');
+  tableHeader.innerText = TablePreviewDomManipulator.tableNamePrefix + tableId;
 
-function createNewTable(inputObjArray, levelNo, row, col) {
-  if (inputObjArray.constructor !== Array) inputObjArray = [inputObjArray];
-  // Initial processing of object
-  const sampleObject = inputObjArray[0] ?? {},
-    [headersObj, maxLevel] = JsonUtils.formHeaderObj(sampleObject),
-    flattenedKeys = Object.keys(JsonUtils.flattenObj(sampleObject)),
-    maxPartitions = headersObj.reduce((acc, val) => acc + val.length, 0),
-    tableNode = document.createElement('div'),
-    tableId = getTableId(row, col, levelNo);
-
-  // To maintain order on adding tables in the container
-  layoutsArray.push(tableNode);
-
+  // Actual Table node
+  const tableNode = document.createElement('div');
   tableNode.classList.add('sheet-grid-container');
   tableNode.id = TablePreviewDomManipulator.tableIdPrefix + tableId;
 
   // TODO ::- Make proper min width value instead of 50px
   tableNode.style.gridTemplateColumns = `repeat(${maxPartitions}, minmax(50px, auto))`;
 
-  // Adding headers
-  TablePreviewDomManipulator.addHeaders(headersObj, tableNode, maxLevel);
+  // Table wrapper for header & actual content
+  const tableWrapper = document.createElement('div');
+  tableWrapper.classList.add('table-wrapper');
 
-  // Adding content
-  const createNewTableCallback = (inputValue, r, c) =>
-    createNewTable(inputValue, levelNo + 1, r, c);
+  tableWrapper.appendChild(tableHeader);
+  tableWrapper.appendChild(tableNode);
 
+  return [tableWrapper, tableNode];
+}
+
+function injectContent(
+  inputObjArray,
+  flattenedKeys,
+  tableNode,
+  createNewTableCallback
+) {
   for (const [idx, item] of Object.entries(inputObjArray)) {
     // Adding a new row of content
     flattenedKeys
@@ -53,14 +53,51 @@ function createNewTable(inputObjArray, levelNo, row, col) {
         )
       );
   }
+}
+
+function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
+  // Initial polyfill for an Object array
+  if (inputObjArray.constructor !== Array) {
+    inputObjArray = [inputObjArray];
+  }
+
+  // Initial processing of object
+  const sampleObject = inputObjArray[0] ?? {},
+    [headersObj, maxLevel] = JsonUtils.formHeaderObj(sampleObject),
+    flattenedKeys = Object.keys(JsonUtils.flattenObj(sampleObject)),
+    maxPartitions = headersObj.reduce((acc, val) => acc + val.length, 0),
+    tableId = getTableId(levelNo, rowNo, colNo),
+    createNewTableCallback = (inputValue, r, c) =>
+      createNewTable(inputValue, levelNo + 1, r, c);
+
+  // Creating a new table space
+  const [wrapper, tableNode] = createSpaceForTable(tableId, maxPartitions);
+
+  // To maintain order on adding tables in the container
+  layoutsArray.push(wrapper);
+
+  // Adding headers
+  TablePreviewDomManipulator.addHeaders(headersObj, tableNode, maxLevel);
+
+  // Adding content
+  injectContent(
+    inputObjArray,
+    flattenedKeys,
+    tableNode,
+    createNewTableCallback
+  );
 
   return tableId;
 }
 
 function createNewTableViews(inputObjArray) {
+  layoutsArray = [];
   createNewTable(inputObjArray, 0, 0, 0);
-
   layoutsArray.forEach(table => previewContainer.appendChild(table));
+}
+
+function removeTables() {
+  [...previewContainer.children].forEach(i => previewContainer.removeChild(i));
 }
 
 function resetTable(newObjArray) {

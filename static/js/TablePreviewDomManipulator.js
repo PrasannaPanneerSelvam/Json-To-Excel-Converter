@@ -1,6 +1,7 @@
 import * as JsonUtils from './JsonUtils.js';
 
-const tableIdPrefix = 'table-id:';
+const tableIdPrefix = 'table-id:',
+  tableNamePrefix = 'Table no. ';
 
 function createHeader({ text, row, length, extend, maxLevel }) {
   const div = document.createElement('div');
@@ -48,7 +49,7 @@ function handleObjectArrayValues(
 
   const aTag = document.createElement('a');
   aTag.href = '#' + tableIdPrefix + newTableId;
-  aTag.innerText = `Table no. ${newTableId}`;
+  aTag.innerText = tableNamePrefix + newTableId;
   div.appendChild(aTag);
 
   return div;
@@ -91,4 +92,4 @@ function addNewContentCell(content, row, col, { createNewTableCallback }) {
   );
 }
 
-export { addHeaders, addNewContentCell, tableIdPrefix };
+export { addHeaders, addNewContentCell, tableIdPrefix, tableNamePrefix };
