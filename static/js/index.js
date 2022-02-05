@@ -31,7 +31,7 @@ function convertJsontoExcel(data) {
     .catch(() => console.error('Error!'));
 }
 
-function foo(successCb = () => {}, failureCb = () => {}) {
+function JsonValidatorWrapper(successCb = () => {}, failureCb = () => {}) {
   function validateString(inp) {
     try {
       const parsedData = JSON.parse(inp);
@@ -55,7 +55,7 @@ function foo(successCb = () => {}, failureCb = () => {}) {
 
 submitButton.addEventListener(
   'click',
-  foo(
+  JsonValidatorWrapper(
     validatedJson => {
       convertJsontoExcel(validatedJson);
     },
@@ -66,7 +66,7 @@ submitButton.addEventListener(
 
 prettifyButton.addEventListener(
   'click',
-  foo(
+  JsonValidatorWrapper(
     validatedJson => {
       const prettifiedJson = JSON.stringify(validatedJson, null, 4);
       jsonTextArea.value = prettifiedJson;
@@ -78,7 +78,7 @@ prettifyButton.addEventListener(
 
 previewButton.addEventListener(
   'click',
-  foo(
+  JsonValidatorWrapper(
     validatedJson => {
       TablePreviewGenerator.resetTable(validatedJson);
     },
