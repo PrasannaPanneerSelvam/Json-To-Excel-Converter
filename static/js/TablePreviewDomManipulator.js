@@ -1,5 +1,7 @@
 import * as JsonUtils from './JsonUtils.js';
 
+const tableIdPrefix = 'table-id:';
+
 function createHeader({ text, row, length, extend, maxLevel }) {
   const div = document.createElement('div');
   div.innerText = text;
@@ -33,13 +35,21 @@ function addHeaders(obj, rootElem, maxLevel, row = 0) {
   addHeaders(childrenQueue, rootElem, maxLevel, row + 1);
 }
 
-function handleObjectArrayValues(div, content, createNewTableCallback) {
-  div.innerText = 'TODO :: Hyperlink';
-
-  // TODO :: Add hyperlink for the new table in the callee cell
+function handleObjectArrayValues(
+  div,
+  row,
+  col,
+  content,
+  createNewTableCallback
+) {
   // TODO :: Lazy loading for more number of tables
 
-  createNewTableCallback(content);
+  const newTableId = createNewTableCallback(content, row, col);
+
+  const aTag = document.createElement('a');
+  aTag.href = '#' + tableIdPrefix + newTableId;
+  aTag.innerText = `Table no. ${newTableId}`;
+  div.appendChild(aTag);
 
   return div;
 }
@@ -72,7 +82,13 @@ function addNewContentCell(content, row, col, { createNewTableCallback }) {
     return div;
   }
 
-  return handleObjectArrayValues(div, content, createNewTableCallback);
+  return handleObjectArrayValues(
+    div,
+    row,
+    col,
+    content,
+    createNewTableCallback
+  );
 }
 
-export { addHeaders, addNewContentCell };
+export { addHeaders, addNewContentCell, tableIdPrefix };
