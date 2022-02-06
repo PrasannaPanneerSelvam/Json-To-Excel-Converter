@@ -53,3 +53,41 @@ $header-colors: --primary-header-color, --secondary-header-color,
 .content-col-0 {
   background-color: #eee;
 }
+
+.color-grid {
+  --size: 20px;
+  --gap: 1px;
+
+  // display: inline-block;
+
+  & > div {
+    display: block;
+    margin: var(--gap) 0;
+
+    & > div {
+      display: inline-block;
+      height: var(--size);
+      width: var(--size);
+      border-radius: 50%;
+      margin: 0 var(--gap);
+
+      border: 0.5px solid black;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

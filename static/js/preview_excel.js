@@ -1,4 +1,5 @@
 import * as TablePreviewGenerator from './PreviewGenerator.js';
+import * as ColorPicker from './ColorPicker.js';
 
 const test = {
   StudentName: 'Bruce Wayne',

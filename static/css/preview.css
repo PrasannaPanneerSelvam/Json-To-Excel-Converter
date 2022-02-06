@@ -62,4 +62,39 @@
 .content-col-0 {
   background-color: #eee;
 }
+
+.color-grid {
+  --size: 20px;
+  --gap: 1px;
+}
+
+.color-grid > div {
+  display: block;
+  margin: var(--gap) 0;
+}
+
+.color-grid > div > div {
+  display: inline-block;
+  height: var(--size);
+  width: var(--size);
+  border-radius: 50%;
+  margin: 0 var(--gap);
+  border: 0.5px solid black;
+}
+
+.color-grid > div > div:first-child {
+  margin-left: 0;
+}
+
+.color-grid > div > div:last-child {
+  margin-right: 0;
+}
+
+.color-grid > div:first-child {
+  margin-top: 0;
+}
+
+.color-grid > div:last-child {
+  margin-bottom: 0;
+}
 /*# sourceMappingURL=preview.css.map */
