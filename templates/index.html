@@ -6,33 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Json to Excel convertor</title>
 
-    <!-- <link rel="stylesheet" href="../static/css/index.css" />
-    <link rel="stylesheet" href="../static/css/preview.css" /> -->
+    <link rel="stylesheet" href="../static/css/index.css" />
+    <link rel="stylesheet" href="../static/css/preview.css" />
 
-    <link
+    <!-- <link
       rel="stylesheet"
       href="{{ url_for('static/css', filename='index.css') }}"
     />
     <link
       rel="stylesheet"
       href="{{ url_for('static/css', filename='preview.css') }}"
-    />
+    /> -->
   </head>
   <body>
-    <div id="json-form">
+    <!-- <div id="json-form">
       <textarea id="json-input"></textarea>
       <button id="prettify-button">Prettify</button>
       <button id="submit-button">Submit</button>
       <button id="preview-button">Preview</button>
-    </div>
+    </div> -->
 
-    <div class="container">
-      <div id="sheet-grid-container"></div>
-    </div>
+    <div class="container" id="preview-container"></div>
 
-    <!-- <script src="../static/js/index.js"></script>
-    <script src="../static/js/preview_excel.js"></script> -->
-    <script src="{{ url_for('static/js', filename='index.js') }}"></script>
-    <script src="{{ url_for('static/js', filename='preview_excel.js') }}"></script>
+    <!-- <script src="../static/js/index.js"></script> -->
+    <script src="../static/js/preview_excel.js" type="module"></script>
+    <!-- <script src="{{ url_for('static/js', filename='index.js') }}"></script>
+    <script src="{{ url_for('static/js', filename='preview_excel.js') }}"></script> -->
   </body>
 </html>
