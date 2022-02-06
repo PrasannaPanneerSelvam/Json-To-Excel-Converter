@@ -41,21 +41,43 @@ function handleObjectArrayValues(
   row,
   col,
   content,
-  createNewTableCallback
+  { createNewTableCallback, lazyLoadingCallback }
 ) {
   // TODO :: Lazy loading for more number of tables
 
-  const newTableId = createNewTableCallback(content, row, col);
-
   const aTag = document.createElement('a');
-  aTag.href = '#' + tableIdPrefix + newTableId;
-  aTag.innerText = tableNamePrefix + newTableId;
+
+  const createNewTableLazily = () => {
+    const newTableId = createNewTableCallback(content, row, col);
+    aTag.href = '#' + tableIdPrefix + newTableId;
+    aTag.innerText = tableNamePrefix + newTableId;
+  };
+
+  const useLazyLoading = true;
+
+  if (useLazyLoading) {
+    // Setting lazy load click text
+    // TODO :: Use loader at the bottom for better UX
+    aTag.innerText = 'Click here';
+    aTag.href = '#';
+
+    // Create a table only once
+    const lazyCb = () => {
+      lazyLoadingCallback(createNewTableLazily);
+      aTag.removeEventListener('click', lazyCb);
+    };
+
+    aTag.addEventListener('click', lazyCb);
+  } else {
+    createNewTableLazily();
+  }
+
   div.appendChild(aTag);
 
   return div;
 }
 
-function addNewContentCell(content, row, col, { createNewTableCallback }) {
+function addNewContentCell(content, row, col, callbacksObject) {
   const div = document.createElement('div');
 
   div.classList.add('content-cell');
@@ -83,13 +105,7 @@ function addNewContentCell(content, row, col, { createNewTableCallback }) {
     return div;
   }
 
-  return handleObjectArrayValues(
-    div,
-    row,
-    col,
-    content,
-    createNewTableCallback
-  );
+  return handleObjectArrayValues(div, row, col, content, callbacksObject);
 }
 
 export { addHeaders, addNewContentCell, tableIdPrefix, tableNamePrefix };

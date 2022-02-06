@@ -39,7 +39,8 @@ function injectContent(
   inputObjArray,
   flattenedKeys,
   tableNode,
-  createNewTableCallback
+  createNewTableCallback,
+  lazyLoadingCallback
 ) {
   for (const [idx, item] of Object.entries(inputObjArray)) {
     // Adding a new row of content
@@ -49,6 +50,7 @@ function injectContent(
         tableNode.append(
           TablePreviewDomManipulator.addNewContentCell(value, idx, col, {
             createNewTableCallback,
+            lazyLoadingCallback,
           })
         )
       );
@@ -84,16 +86,22 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
     inputObjArray,
     flattenedKeys,
     tableNode,
-    createNewTableCallback
+    createNewTableCallback,
+    lazyLoadingCallback
   );
 
   return tableId;
 }
 
-function createNewTableViews(inputObjArray) {
+function lazyLoadingCallback(cb) {
   layoutsArray = [];
-  createNewTable(inputObjArray, 0, 0, 0);
+  cb();
   layoutsArray.forEach(table => previewContainer.appendChild(table));
+  layoutsArray = [];
+}
+
+function createNewTableViews(inputObjArray) {
+  lazyLoadingCallback(() => createNewTable(inputObjArray, 0, 0, 0));
 }
 
 function removeTables() {
