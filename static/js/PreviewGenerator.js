@@ -20,7 +20,6 @@ function createSpaceForTable(tableId, maxPartitions) {
   // Actual Table node
   const tableNode = document.createElement('div');
   tableNode.classList.add('sheet-grid-container');
-  tableNode.id = TablePreviewDomManipulator.tableIdPrefix + tableId;
 
   // TODO ::- Make proper min width value instead of 50px
   tableNode.style.gridTemplateColumns = `repeat(${maxPartitions}, minmax(50px, auto))`;
@@ -28,6 +27,7 @@ function createSpaceForTable(tableId, maxPartitions) {
   // Table wrapper for header & actual content
   const tableWrapper = document.createElement('div');
   tableWrapper.classList.add('table-wrapper');
+  tableWrapper.id = TablePreviewDomManipulator.tableIdPrefix + tableId;
 
   tableWrapper.appendChild(tableHeader);
   tableWrapper.appendChild(tableNode);

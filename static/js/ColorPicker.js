@@ -143,4 +143,11 @@ const primaryColorsGrid = document.getElementById('primary-color-grid'),
 addCellsInGrid(primaryColorsGrid, 1, 8, standardColors);
 addCellsInGrid(additionalColorsGrid, 8, 10, additionalColors);
 
+// Adding a transparent color cell
+// TODO :: Add an block icon for this
+const transparentCellDiv = document.createElement('div');
+transparentCellDiv.style.backgroundColor = 'transparent';
+addPickColorEvent(transparentCellDiv);
+primaryColorsGrid.children[0].appendChild(transparentCellDiv);
+
 export { setPickColorCallback };

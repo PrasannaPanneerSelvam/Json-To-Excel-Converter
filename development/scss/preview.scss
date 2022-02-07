@@ -1,7 +1,21 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
-  --primary-header-color: #f00;
-  --secondary-header-color: #ff0;
-  --tertiary-header-color: #0f0;
+  --preview-primary-header-color: #f00;
+  --preview-secondary-header-color: #ff0;
+  --preview-tertiary-header-color: #0f0;
+
+  --preview-cell-color: #0ff;
+  --preview-even-column-color: #eee;
+  --preview-odd-column-color: none;
+  --preview-even-row-color: none;
+  --preview-odd-row-color: none;
 }
 
 .container {
@@ -15,7 +29,7 @@
 }
 
 .sheet-grid-container {
-  background-color: aqua;
+  background-color: var(--preview-cell-color);
 
   display: grid;
   grid-template-columns: 20px 20px;
@@ -35,8 +49,8 @@
   border: 0.25px solid black;
 }
 
-$header-colors: --primary-header-color, --secondary-header-color,
-  --tertiary-header-color;
+$header-colors: --preview-primary-header-color, --preview-secondary-header-color,
+  --preview-tertiary-header-color;
 
 @each $current-color in $header-colors {
   $idx: index($header-colors, $current-color) - 1;
@@ -50,8 +64,21 @@ $header-colors: --primary-header-color, --secondary-header-color,
   border: 0.25px solid #222;
 }
 
+// High priority to column colors
+.content-row-0 {
+  background-color: var(--preview-even-row-color);
+}
+
+.content-row-1 {
+  background-color: var(--preview-odd-row-color);
+}
+
 .content-col-0 {
-  background-color: #eee;
+  background-color: var(--preview-even-column-color);
+}
+
+.content-col-1 {
+  background-color: var(--preview-odd-column-color);
 }
 
 .color-grid {

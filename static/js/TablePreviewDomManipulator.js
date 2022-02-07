@@ -1,5 +1,3 @@
-import * as JsonUtils from './JsonUtils.js';
-
 const tableIdPrefix = 'table-id:',
   tableNamePrefix = 'Table no. ';
 

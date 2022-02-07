@@ -61,6 +61,26 @@ const ps = {
   hi: 123,
 };
 
-// TablePreviewGenerator.createNewTable(v);
+TablePreviewGenerator.createNewTableViews(test);
 
-TablePreviewGenerator.createNewTableViews(ps);
+// TablePreviewGenerator.createNewTableViews(ps);
+
+const setGlobalStyles = (function () {
+  const globalStyles = document.body.style;
+  return function (key, value) {
+    globalStyles.setProperty(key, value);
+  };
+})();
+
+const colorDropDownArray = [...document.getElementsByClassName('pick-color')];
+
+colorDropDownArray.forEach(dropDown => {
+  const key = '--preview-' + dropDown.id;
+  dropDown.addEventListener('click', () =>
+    ColorPicker.setPickColorCallback(colorValue => {
+      setGlobalStyles(key, colorValue);
+      // Resetting with empty callback
+      ColorPicker.setPickColorCallback(() => {});
+    })
+  );
+});
