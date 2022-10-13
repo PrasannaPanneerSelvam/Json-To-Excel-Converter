@@ -87,6 +87,11 @@ function addNewContentCell(content, row, col, callbacksObject) {
     return div;
   }
 
+  if (content.constructor === Object) {
+    div.innerText = JSON.stringify(content);
+    return div;
+  }
+
   // Json Flattening will remove all nested objects
   if (content.constructor !== Array) {
     div.innerText = content;

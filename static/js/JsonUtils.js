@@ -17,8 +17,15 @@ function flattenObj(obj) {
 
   for (const [key, value] of Object.entries(obj)) {
     if (isJsonObject(value)) {
-      const childObj = flattenObj(value);
-      for (const [childKey, childValue] of Object.entries(childObj))
+      const childObj = flattenObj(value),
+        childEntries = Object.entries(childObj);
+
+      if (childEntries.length === 0) {
+        resultObj[key] = '{}';
+        continue;
+      }
+
+      for (const [childKey, childValue] of childEntries)
         resultObj[key + pathDelimiter + childKey] = childValue;
     } else {
       resultObj[key] = value;
@@ -52,10 +59,10 @@ function formHeaderObj(obj, row = 0) {
 
   for (const [key, value] of Object.entries(obj)) {
     let children = null,
-      length = 1,
+      length = 1, // Width in units
       level;
 
-    if (isJsonObject(value)) {
+    if (isJsonObject(value) && Object.keys(value).length) {
       [children, level] = formHeaderObj(value, row + 1);
       length = children.reduce((acc, val) => acc + val.length, 0);
       localMaxLevel = Math.max(localMaxLevel, level);
