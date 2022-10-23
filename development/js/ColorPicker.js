@@ -1,6 +1,6 @@
-import standardColors from './../json/StandardColors.json' assert { type: 'json' };
-import customColors from './../json/CustomColors.json' assert { type: 'json' };
-import additionalColors from './../json/AdditionalColors.json' assert { type: 'json' };
+import standardColors from '../jsonData/StandardColors.js';
+import customColors from '../jsonData/CustomColors.js';
+import additionalColors from '../jsonData/AdditionalColors.js';
 
 let pickColorCallback = (color) => {
   console.log('Selected color', color);
