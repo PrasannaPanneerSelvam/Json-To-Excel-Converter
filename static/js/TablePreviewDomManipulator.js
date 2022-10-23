@@ -35,7 +35,7 @@ function createHeader({ text, row, length, extend, maxLevel }) {
 
   tableHeaderCell.rowSpan =
     extend
-    ? maxLevel - row + 2
+    ? maxLevel - row + 1
     : 1;
 
   // How much width it have to occupy
@@ -48,7 +48,7 @@ function createHeader({ text, row, length, extend, maxLevel }) {
   return tableHeaderCell;
 }
 
-function addHeaders(obj, rootElem, maxLevel, row = 1) {
+function addHeaders(obj, rootElem, maxLevel, row = 0) {
   if (obj.length === 0) return;
 
   const childrenQueue = [],
