@@ -1,33 +1,50 @@
 const tableIdPrefix = 'table-id:',
   tableNamePrefix = 'Table no. ';
 
-const ArrayStylingEnum = {
-    NoSpace: ',',
+// const ArrayStylingEnum = {
+//     NoSpace: ',',
 
-    SpaceAfter: ' ,',
-    SpaceBefore: ', ',
-    SpaceOnBothSides: ' , ',
+//     SpaceAfter: ' ,',
+//     SpaceBefore: ', ',
+//     SpaceOnBothSides: ' , ',
 
-    StartingComma: '\n, ',
-    TrailingComma: ',\n ',
-  },
-  DataStylingEnum = {
-    Normal: Symbol(),
-    Programmer: Symbol(),
-  };
+//     StartingComma: '\n, ',
+//     TrailingComma: ',\n ',
+//   },
+//   DataStylingEnum = {
+//     Normal: Symbol(),
+//     Programmer: Symbol(),
+//   };
 
-let arrayStylingType = ArrayStylingEnum.StartingComma,
-  dataStylingType = DataStylingEnum.Normal;
+// let arrayStylingType = ArrayStylingEnum.StartingComma,
+//   dataStylingType = DataStylingEnum.Normal;
 
+const getFormattedArrayValues = (tableDataCell, array) => {
+  const table = document.createElement('table');
+  table.classList.add('array-table');
 
-const getFormattedArrayValues = (array) => {
-  const actualValue = array.join(arrayStylingType);
+  for(let idx = 0; idx < array.length; idx++) {
+    const tableRow = document.createElement('tr'),
+      indexText = document.createElement('th'),
+      valueText = document.createElement('td');
 
-  if (dataStylingType === DataStylingEnum.Normal) return actualValue;
+    indexText.innerText = idx + 1;
+    valueText.innerText = array[idx];
 
-  if (arrayStylingType === ArrayStylingEnum.NoSpace) return `[${actualValue}]`;
+    tableRow.appendChild(indexText);
+    tableRow.appendChild(valueText);
+    table.appendChild(tableRow);
+  }
 
-  return `[ ${actualValue}\n]`;
+  tableDataCell.appendChild(table);
+
+  // const actualValue = array.join(arrayStylingType);
+
+  // if (dataStylingType === DataStylingEnum.Normal) return actualValue;
+
+  // if (arrayStylingType === ArrayStylingEnum.NoSpace) return `[${actualValue}]`;
+
+  // return `[ ${actualValue}\n]`;
 };
 
 function createHeader({ text, row, length, extend, maxLevel }) {
@@ -196,7 +213,7 @@ function addNewContentCell(content, row, col, callbacksObject) {
   }
 
   if (content[0]?.constructor !== Object) {
-    tableDataCell.innerText = getFormattedArrayValues(content);
+    getFormattedArrayValues(tableDataCell, content);
     return tableDataCell;
   }
 

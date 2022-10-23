@@ -186,3 +186,20 @@ $header-colors: --preview-primary-header-color, --preview-secondary-header-color
     background-color: black;
   }
 }
+
+.array-table {
+  margin: 5px;
+  border: 0.25px solid var(--border-color);
+
+  th {
+    text-align: right;
+    padding: 2px 5px;
+    border: 0.25px solid var(--border-color);
+  }
+
+  td {
+    text-align: left;
+    padding: 2px 5px;
+    border: 0.25px solid var(--border-color);
+  }
+}

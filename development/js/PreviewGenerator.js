@@ -61,13 +61,21 @@ function injectContent(
   }
 }
 
-function createSampleObject(objectList, sampleObject = {}) {
-  for (var idx = 0; idx < objectList.length; idx++)
-    for (const [key, value] of Object.entries(objectList[idx]))
-      sampleObject[key] =
-        !value && value.constructor === Object
-          ? createSampleObject(value, createSampleObject[key])
+function createSampleObject(objectList) {
+  function traverseNestedObjects(object, inputObject = {}) {
+    for (const [key, value] of Object.entries(object))
+      inputObject[key] =
+        value && value.constructor === Object
+          ? traverseNestedObjects(value, inputObject[key])
           : '';
+
+    return inputObject;
+  }
+
+  const sampleObject = {};
+  // Using for loop instead of forEach loop just for perf sake😅
+  for (let idx = 0; idx < objectList.length; idx++)
+    traverseNestedObjects(objectList[idx], sampleObject);
 
   return sampleObject;
 }

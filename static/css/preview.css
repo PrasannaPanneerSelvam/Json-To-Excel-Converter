@@ -187,4 +187,21 @@ a {
   top: calc(50% - 0.5px);
   background-color: black;
 }
+
+.array-table {
+  margin: 5px;
+  border: 0.25px solid var(--border-color);
+}
+
+.array-table th {
+  text-align: right;
+  padding: 2px 5px;
+  border: 0.25px solid var(--border-color);
+}
+
+.array-table td {
+  text-align: left;
+  padding: 2px 5px;
+  border: 0.25px solid var(--border-color);
+}
 /*# sourceMappingURL=preview.css.map */
