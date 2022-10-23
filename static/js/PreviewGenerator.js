@@ -46,18 +46,30 @@ function injectContent(
     flattenedKeys
       .map(key => JsonUtils.accessNestedParams(item, key))
       .forEach((value, col) => {
-        const parentToBeAttached = isVerticalTable ? tableNode.children[col] : tableRow;
+        const parentToBeAttached = isVerticalTable
+          ? tableNode.children[col]
+          : tableRow;
         parentToBeAttached.append(
           TablePreviewDomManipulator.addNewContentCell(value, idx, col, {
             createNewTableCallback,
             lazyLoadingCallback,
           })
-        )
+        );
       });
 
-    if(!isVerticalTable)
-      tableNode.appendChild(tableRow);
+    if (!isVerticalTable) tableNode.appendChild(tableRow);
   }
+}
+
+function createSampleObject(objectList, sampleObject = {}) {
+  for (var idx = 0; idx < objectList.length; idx++)
+    for (const [key, value] of Object.entries(objectList[idx]))
+      sampleObject[key] =
+        !value && value.constructor === Object
+          ? createSampleObject(value, createSampleObject[key])
+          : '';
+
+  return sampleObject;
 }
 
 function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
@@ -67,7 +79,7 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
   }
 
   // Initial processing of object
-  const sampleObject = inputObjArray[0] ?? {},
+  const sampleObject = createSampleObject(inputObjArray) ?? {},
     [headersObj, maxLevel] = JsonUtils.formHeaderObj(sampleObject),
     flattenedKeys = Object.keys(JsonUtils.flattenObj(sampleObject)),
     maxPartitions = headersObj.reduce((acc, val) => acc + val.length, 0),
@@ -84,8 +96,11 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
   const isVerticalTable = inputObjArray.length < 2;
 
   // Adding headers
-  if(isVerticalTable) TablePreviewDomManipulator.createVerticalTable(headersObj, tableNode, maxLevel);
-  else TablePreviewDomManipulator.addHeaders(headersObj, tableNode, maxLevel); 
+  const createHeaders = isVerticalTable
+    ? TablePreviewDomManipulator.createVerticalTable
+    : TablePreviewDomManipulator.addHeaders;
+
+  createHeaders(headersObj, tableNode, maxLevel);
 
   // Adding content
   injectContent(
