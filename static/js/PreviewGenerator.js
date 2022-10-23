@@ -37,22 +37,26 @@ function injectContent(
   flattenedKeys,
   tableNode,
   createNewTableCallback,
-  lazyLoadingCallback
+  lazyLoadingCallback,
+  isVerticalTable
 ) {
   for (const [idx, item] of Object.entries(inputObjArray)) {
     // Adding a new row of content
     const tableRow = document.createElement('tr');
     flattenedKeys
       .map(key => JsonUtils.accessNestedParams(item, key))
-      .forEach((value, col) =>
-        tableRow.append(
+      .forEach((value, col) => {
+        const parentToBeAttached = isVerticalTable ? tableNode.children[col] : tableRow;
+        parentToBeAttached.append(
           TablePreviewDomManipulator.addNewContentCell(value, idx, col, {
             createNewTableCallback,
             lazyLoadingCallback,
           })
         )
-      );
-    tableNode.appendChild(tableRow);
+      });
+
+    if(!isVerticalTable)
+      tableNode.appendChild(tableRow);
   }
 }
 
@@ -77,8 +81,11 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
   // To maintain order on adding tables in the container
   layoutsArray.push(wrapper);
 
+  const isVerticalTable = inputObjArray.length < 2;
+
   // Adding headers
-  TablePreviewDomManipulator.addHeaders(headersObj, tableNode, maxLevel);
+  if(isVerticalTable) TablePreviewDomManipulator.createVerticalTable(headersObj, tableNode, maxLevel);
+  else TablePreviewDomManipulator.addHeaders(headersObj, tableNode, maxLevel); 
 
   // Adding content
   injectContent(
@@ -86,7 +93,8 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
     flattenedKeys,
     tableNode,
     createNewTableCallback,
-    lazyLoadingCallback
+    lazyLoadingCallback,
+    isVerticalTable
   );
 
   return tableId;

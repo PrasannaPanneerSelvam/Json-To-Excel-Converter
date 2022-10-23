@@ -33,10 +33,7 @@ const getFormattedArrayValues = (array) => {
 function createHeader({ text, row, length, extend, maxLevel }) {
   const tableHeaderCell = document.createElement('th');
 
-  tableHeaderCell.rowSpan =
-    extend
-    ? maxLevel - row + 1
-    : 1;
+  tableHeaderCell.rowSpan = extend ? maxLevel - row + 1 : 1;
 
   // How much width it have to occupy
   tableHeaderCell.colSpan = length;
@@ -68,6 +65,65 @@ function addHeaders(obj, rootElem, maxLevel, row = 0) {
   rootElem.appendChild(tableRow);
 
   addHeaders(childrenQueue, rootElem, maxLevel, row + 1);
+}
+
+function createVerticalTable(obj, rootElem, maxLevel) {
+  if (obj.length === 0) return;
+
+  const totalSpan = obj.reduce((acc, { length }) => acc + length, 0);
+
+  for (let rowIdx = 0; rowIdx < totalSpan; rowIdx++) {
+    const tableRow = document.createElement('tr');
+    rootElem.appendChild(tableRow);
+  }
+
+  addVerticalHeaders(obj, rootElem, maxLevel, 0, 0);
+}
+
+function addVerticalHeaders(obj, rootElem, maxLevel, row, currentLevel) {
+  if (obj.length === 0) return;
+
+  const childrenQueue = [],
+    tableRows = rootElem.children;
+
+  for (
+    let idx = 0, start = 0, item = obj[idx];
+    idx < obj.length;
+    item = obj[++idx]
+  ) {
+    const newHeader = createHeader({
+      text: item.key,
+      row: currentLevel,
+      length: item.length,
+      extend: !item.children,
+      maxLevel,
+    });
+    tableRows[row + start].append(newHeader);
+    childrenQueue.push(item.children);
+
+    start += obj[idx].length;
+
+    // Swapping span values
+    const temp = newHeader.colSpan;
+    newHeader.colSpan = newHeader.rowSpan;
+    newHeader.rowSpan = temp;
+  }
+
+  let startingRowNo = row;
+  for (let idx = 0, item; idx < obj.length; idx++) {
+    item = childrenQueue[idx];
+    startingRowNo += obj[idx].length;
+
+    if (item)
+      addVerticalHeaders(
+        item,
+        rootElem,
+        maxLevel,
+        startingRowNo - obj[idx].length, // Done this here just for less code
+        currentLevel + 1,
+        false
+      );
+  }
 }
 
 function handleObjectArrayValues(
@@ -144,7 +200,19 @@ function addNewContentCell(content, row, col, callbacksObject) {
     return tableDataCell;
   }
 
-  return handleObjectArrayValues(tableDataCell, row, col, content, callbacksObject);
+  return handleObjectArrayValues(
+    tableDataCell,
+    row,
+    col,
+    content,
+    callbacksObject
+  );
 }
 
-export { addHeaders, addNewContentCell, tableIdPrefix, tableNamePrefix };
+export {
+  addHeaders,
+  addNewContentCell,
+  tableIdPrefix,
+  tableNamePrefix,
+  createVerticalTable,
+};
