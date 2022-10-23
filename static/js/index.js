@@ -1,3 +1,5 @@
+import * as TablePreviewGenerator from './PreviewGenerator.js';
+
 console.log('Hello');
 const jsonTextArea = document.getElementById('json-input'),
   submitButton = document.getElementById('submit-button'),

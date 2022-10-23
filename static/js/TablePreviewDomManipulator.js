@@ -1,41 +1,77 @@
 const tableIdPrefix = 'table-id:',
   tableNamePrefix = 'Table no. ';
 
+const ArrayStylingEnum = {
+    NoSpace: ',',
+
+    SpaceAfter: ' ,',
+    SpaceBefore: ', ',
+    SpaceOnBothSides: ' , ',
+
+    StartingComma: '\n, ',
+    TrailingComma: ',\n ',
+  },
+  DataStylingEnum = {
+    Normal: Symbol(),
+    Programmer: Symbol(),
+  };
+
+let arrayStylingType = ArrayStylingEnum.StartingComma,
+  dataStylingType = DataStylingEnum.Normal;
+
+
+const getFormattedArrayValues = (array) => {
+  const actualValue = array.join(arrayStylingType);
+
+  if (dataStylingType === DataStylingEnum.Normal) return actualValue;
+
+  if (arrayStylingType === ArrayStylingEnum.NoSpace) return `[${actualValue}]`;
+
+  return `[ ${actualValue}\n]`;
+};
+
 function createHeader({ text, row, length, extend, maxLevel }) {
-  const div = document.createElement('div');
-  div.innerText = text;
+  const tableHeaderCell = document.createElement('th');
 
-  div.classList.add('header-elem');
-  div.classList.add(`header-row-${row % 3}`);
+  tableHeaderCell.rowSpan =
+    extend
+    ? maxLevel - row + 2
+    : 1;
 
-  const styles = div.style;
-  styles.gridColumn = `span ${length}`;
-  styles.gridRow = `${row + 1} / ${(extend ? maxLevel : row) + 2}`;
-  return div;
+  // How much width it have to occupy
+  tableHeaderCell.colSpan = length;
+
+  tableHeaderCell.classList.add('header-elem');
+  tableHeaderCell.classList.add(`header-row-${row % 3}`);
+
+  tableHeaderCell.innerText = text;
+  return tableHeaderCell;
 }
 
-function addHeaders(obj, rootElem, maxLevel, row = 0) {
+function addHeaders(obj, rootElem, maxLevel, row = 1) {
   if (obj.length === 0) return;
 
-  const childrenQueue = [];
+  const childrenQueue = [],
+    tableRow = document.createElement('tr');
   for (const item of obj) {
-    const newDiv = createHeader({
+    const newHeader = createHeader({
       text: item.key,
       row,
       length: item.length,
       extend: !item.children,
       maxLevel,
     });
-    rootElem.append(newDiv);
+    tableRow.append(newHeader);
 
     if (item.children) childrenQueue.push(...item.children);
   }
+  rootElem.appendChild(tableRow);
 
   addHeaders(childrenQueue, rootElem, maxLevel, row + 1);
 }
 
 function handleObjectArrayValues(
-  div,
+  tableDataCell,
   row,
   col,
   content,
@@ -56,7 +92,7 @@ function handleObjectArrayValues(
   if (useLazyLoading) {
     // Setting lazy load click text
     // TODO :: Use loader at the bottom for better UX
-    aTag.innerText = 'Click here';
+    aTag.innerText = '[+] Expand';
     aTag.href = '#';
 
     // Create a table only once
@@ -70,45 +106,45 @@ function handleObjectArrayValues(
     createNewTableLazily();
   }
 
-  div.appendChild(aTag);
+  tableDataCell.appendChild(aTag);
 
-  return div;
+  return tableDataCell;
 }
 
 function addNewContentCell(content, row, col, callbacksObject) {
-  const div = document.createElement('div');
+  const tableDataCell = document.createElement('td');
 
-  div.classList.add('content-cell');
-  div.classList.add(`content-row-${row % 2}`);
-  div.classList.add(`content-col-${col % 2}`);
+  tableDataCell.classList.add('content-cell');
+  tableDataCell.classList.add(`content-row-${row % 2}`);
+  tableDataCell.classList.add(`content-col-${col % 2}`);
 
   if (content === null || content === undefined) {
     // TODO :: Handle empty cells
-    return div;
+    return tableDataCell;
   }
 
   if (content.constructor === Object) {
-    div.innerText = JSON.stringify(content);
-    return div;
+    tableDataCell.innerText = JSON.stringify(content);
+    return tableDataCell;
   }
 
   // Json Flattening will remove all nested objects
   if (content.constructor !== Array) {
-    div.innerText = content;
-    return div;
+    tableDataCell.innerText = content;
+    return tableDataCell;
   }
 
   if (content.length === 0) {
-    div.innerText = '[ ]';
-    return div;
+    tableDataCell.innerText = '[ ]';
+    return tableDataCell;
   }
 
   if (content[0]?.constructor !== Object) {
-    div.innerText = `[${content}]`;
-    return div;
+    tableDataCell.innerText = getFormattedArrayValues(content);
+    return tableDataCell;
   }
 
-  return handleObjectArrayValues(div, row, col, content, callbacksObject);
+  return handleObjectArrayValues(tableDataCell, row, col, content, callbacksObject);
 }
 
 export { addHeaders, addNewContentCell, tableIdPrefix, tableNamePrefix };

@@ -1,5 +1,7 @@
+import {setGlobalStyles} from './Utils.js'
 import * as TablePreviewGenerator from './PreviewGenerator.js';
 import * as ColorPicker from './ColorPicker.js';
+import * as Gravity from './ContentCellGravity.js';
 
 const test = {
   StudentName: 'Bruce Wayne',
@@ -65,13 +67,6 @@ TablePreviewGenerator.createNewTableViews(test);
 
 // TablePreviewGenerator.createNewTableViews(ps);
 
-const setGlobalStyles = (function () {
-  const globalStyles = document.body.style;
-  return function (key, value) {
-    globalStyles.setProperty(key, value);
-  };
-})();
-
 const colorDropDownArray = [...document.getElementsByClassName('pick-color')];
 
 colorDropDownArray.forEach(dropDown => {
@@ -84,3 +79,5 @@ colorDropDownArray.forEach(dropDown => {
     })
   );
 });
+
+Gravity.addContentPositionControl();

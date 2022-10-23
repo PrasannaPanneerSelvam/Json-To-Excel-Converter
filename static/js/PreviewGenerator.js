@@ -13,23 +13,20 @@ let previewContainer = document.getElementById('preview-container'),
 
 function createSpaceForTable(tableId, maxPartitions) {
   // Table Header
-  const tableHeader = document.createElement('div');
-  tableHeader.classList.add('table-header');
-  tableHeader.innerText = TablePreviewDomManipulator.tableNamePrefix + tableId;
+  const tableTitle = document.createElement('div');
+  tableTitle.classList.add('table-title');
+  tableTitle.innerText = TablePreviewDomManipulator.tableNamePrefix + tableId;
 
   // Actual Table node
-  const tableNode = document.createElement('div');
+  const tableNode = document.createElement('table');
   tableNode.classList.add('sheet-grid-container');
 
-  // TODO ::- Make proper min width value instead of 50px
-  tableNode.style.gridTemplateColumns = `repeat(${maxPartitions}, minmax(50px, auto))`;
-
-  // Table wrapper for header & actual content
+  // Table wrapper for title & actual content
   const tableWrapper = document.createElement('div');
   tableWrapper.classList.add('table-wrapper');
   tableWrapper.id = TablePreviewDomManipulator.tableIdPrefix + tableId;
 
-  tableWrapper.appendChild(tableHeader);
+  tableWrapper.appendChild(tableTitle);
   tableWrapper.appendChild(tableNode);
 
   return [tableWrapper, tableNode];
@@ -44,16 +41,18 @@ function injectContent(
 ) {
   for (const [idx, item] of Object.entries(inputObjArray)) {
     // Adding a new row of content
+    const tableRow = document.createElement('tr');
     flattenedKeys
       .map(key => JsonUtils.accessNestedParams(item, key))
       .forEach((value, col) =>
-        tableNode.append(
+        tableRow.append(
           TablePreviewDomManipulator.addNewContentCell(value, idx, col, {
             createNewTableCallback,
             lazyLoadingCallback,
           })
         )
       );
+    tableNode.appendChild(tableRow);
   }
 }
 
