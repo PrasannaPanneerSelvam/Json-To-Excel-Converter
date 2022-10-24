@@ -1,6 +1,6 @@
 const setGlobalStyles = (function () {
-  const globalStyles = document.body.style;
-  return function (key, value) {
+  const globalStyles: CSSStyleDeclaration = document.body.style;
+  return function (key: string, value: string) {
     globalStyles.setProperty(key, value);
   };
 })();

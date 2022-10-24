@@ -1,3 +1,11 @@
+import { CreateNewTableCallback, LazyLoadingCallback } from "./CallBackTypes";
+import { Children, HeaderObject, JsTypes } from "./JsonUtils";
+
+interface CallbacksObject {
+  createNewTableCallback: CreateNewTableCallback
+  , lazyLoadingCallback: LazyLoadingCallback
+}
+
 const tableIdPrefix = 'table-id:',
   tableNamePrefix = 'Table no. ';
 
@@ -19,17 +27,17 @@ const tableIdPrefix = 'table-id:',
 // let arrayStylingType = ArrayStylingEnum.StartingComma,
 //   dataStylingType = DataStylingEnum.Normal;
 
-const getFormattedArrayValues = (tableDataCell, array) => {
+const getFormattedArrayValues = (tableDataCell: HTMLTableCellElement, array: JsTypes[]) => {
   const table = document.createElement('table');
   table.classList.add('array-table');
 
-  for(let idx = 0; idx < array.length; idx++) {
+  for (let idx = 0; idx < array.length; idx++) {
     const tableRow = document.createElement('tr'),
       indexText = document.createElement('th'),
       valueText = document.createElement('td');
 
-    indexText.innerText = idx + 1;
-    valueText.innerText = array[idx];
+    indexText.innerText = (idx + 1) + '';
+    valueText.innerText = array[idx] ? array[idx] + '' : '';
 
     tableRow.appendChild(indexText);
     tableRow.appendChild(valueText);
@@ -47,7 +55,7 @@ const getFormattedArrayValues = (tableDataCell, array) => {
   // return `[ ${actualValue}\n]`;
 };
 
-function createHeader({ text, row, length, extend, maxLevel }) {
+function createHeader({ text, row, length, extend, maxLevel }: { text: string, row: number, length: number, extend: boolean, maxLevel: number }) {
   const tableHeaderCell = document.createElement('th');
 
   tableHeaderCell.rowSpan = extend ? maxLevel - row + 1 : 1;
@@ -62,10 +70,10 @@ function createHeader({ text, row, length, extend, maxLevel }) {
   return tableHeaderCell;
 }
 
-function addHeaders(obj, rootElem, maxLevel, row = 0) {
+function addHeaders(obj: HeaderObject[], rootElem: HTMLTableElement, maxLevel: number, row = 0) {
   if (obj.length === 0) return;
 
-  const childrenQueue = [],
+  const childrenQueue: HeaderObject[] = [],
     tableRow = document.createElement('tr');
   for (const item of obj) {
     const newHeader = createHeader({
@@ -84,7 +92,7 @@ function addHeaders(obj, rootElem, maxLevel, row = 0) {
   addHeaders(childrenQueue, rootElem, maxLevel, row + 1);
 }
 
-function createVerticalTable(obj, rootElem, maxLevel) {
+function createVerticalTable(obj: HeaderObject[], rootElem: HTMLTableElement, maxLevel: number) {
   if (obj.length === 0) return;
 
   const totalSpan = obj.reduce((acc, { length }) => acc + length, 0);
@@ -97,14 +105,14 @@ function createVerticalTable(obj, rootElem, maxLevel) {
   addVerticalHeaders(obj, rootElem, maxLevel, 0, 0);
 }
 
-function addVerticalHeaders(obj, rootElem, maxLevel, row, currentLevel) {
+function addVerticalHeaders(obj: HeaderObject[], rootElem: HTMLTableElement, maxLevel: number, row: number, currentLevel: number) {
   if (obj.length === 0) return;
 
-  const childrenQueue = [],
+  const childrenQueue: Children[] = [],
     tableRows = rootElem.children;
 
   for (
-    let idx = 0, start = 0, item = obj[idx];
+    let idx = 0, start = 0, item: HeaderObject = obj[idx];
     idx < obj.length;
     item = obj[++idx]
   ) {
@@ -138,17 +146,16 @@ function addVerticalHeaders(obj, rootElem, maxLevel, row, currentLevel) {
         maxLevel,
         startingRowNo - obj[idx].length, // Done this here just for less code
         currentLevel + 1,
-        false
       );
   }
 }
 
 function handleObjectArrayValues(
-  tableDataCell,
-  row,
-  col,
-  content,
-  { createNewTableCallback, lazyLoadingCallback }
+  tableDataCell: HTMLTableCellElement,
+  row: number,
+  col: number,
+  content: object[],
+  { createNewTableCallback, lazyLoadingCallback }: CallbacksObject
 ) {
   // TODO :: Lazy loading for more number of tables
 
@@ -184,7 +191,7 @@ function handleObjectArrayValues(
   return tableDataCell;
 }
 
-function addNewContentCell(content, row, col, callbacksObject) {
+function addNewContentCell(content: JsTypes, row: number, col: number, callbacksObject: CallbacksObject) {
   const tableDataCell = document.createElement('td');
 
   tableDataCell.classList.add('content-cell');
@@ -203,7 +210,7 @@ function addNewContentCell(content, row, col, callbacksObject) {
 
   // Json Flattening will remove all nested objects
   if (content.constructor !== Array) {
-    tableDataCell.innerText = content;
+    tableDataCell.innerText = content + '';
     return tableDataCell;
   }
 
@@ -221,12 +228,13 @@ function addNewContentCell(content, row, col, callbacksObject) {
     tableDataCell,
     row,
     col,
-    content,
+    content as Object[],
     callbacksObject
   );
 }
 
 export {
+  CallbacksObject,
   addHeaders,
   addNewContentCell,
   tableIdPrefix,

@@ -1,6 +1,24 @@
 let pathDelimiter = '/';
 
-function isJsonObject(obj) {
+type ExceptObject
+  = boolean
+  | number
+  | string
+  | null
+  | undefined
+  | ExceptObject[]
+
+type JsTypes
+  = boolean
+  | number
+  | string
+  | null
+  | undefined
+  | object
+  | JsTypes[]
+
+// TODO :: Fix this `any` type later
+function isJsonObject(obj: any) {
   if (obj === undefined || obj === null) return false;
 
   const primitiveConstructor = [Number, String, Boolean];
@@ -10,10 +28,10 @@ function isJsonObject(obj) {
   return obj.constructor === Object;
 }
 
-function flattenObj(obj) {
+function flattenObj(obj: object) {
   if (!isJsonObject(obj)) return obj;
 
-  const resultObj = {};
+  const resultObj: { [key: string]: ExceptObject } = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (isJsonObject(value)) {
@@ -35,30 +53,39 @@ function flattenObj(obj) {
   return resultObj;
 }
 
-function accessNestedParams(nestedObj, flattenedKey) {
+function accessNestedParams(nestedObj: { [key: string]: JsTypes }, flattenedKey: string) {
   const splittedKeys = flattenedKey.split(pathDelimiter);
 
-  let valueRef = nestedObj;
+  let valueRef: { [key: string]: JsTypes } | string | number | boolean | any[] = nestedObj;
+
   for (const key of splittedKeys) {
     if (
       valueRef === undefined ||
       valueRef === null ||
       valueRef.constructor !== Object
-    )
-      return valueRef;
+    ) return valueRef;
 
-    valueRef = valueRef[key];
+    if (valueRef && valueRef.constructor === Object)
+      valueRef = valueRef[key] as { [key: string]: JsTypes };
   }
   return valueRef;
 }
 
-function formHeaderObj(obj, row = 0) {
-  const result = [];
+type Children = HeaderObject[] | null
+
+interface HeaderObject {
+  key: string
+  , children: Children
+  , length: number
+}
+
+function formHeaderObj(obj: object, row = 0): [HeaderObject[], number] {
+  const result: HeaderObject[] = [];
 
   let localMaxLevel = row;
 
   for (const [key, value] of Object.entries(obj)) {
-    let children = null,
+    let children: Children = null,
       length = 1, // Width in units
       level;
 
@@ -73,8 +100,8 @@ function formHeaderObj(obj, row = 0) {
   return [result, localMaxLevel];
 }
 
-function setPathDelimiter(inp) {
+function setPathDelimiter(inp: string) {
   pathDelimiter = inp + '';
 }
 
-export { flattenObj, accessNestedParams, formHeaderObj, setPathDelimiter };
+export { Children, HeaderObject, JsTypes, flattenObj, accessNestedParams, formHeaderObj, setPathDelimiter };

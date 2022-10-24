@@ -1,4 +1,4 @@
-import * as TablePreviewGenerator from './PreviewGenerator.js';
+import * as TablePreviewGenerator from './PreviewGenerator';
 
 console.log('Hello');
 const jsonTextArea = document.getElementById('json-input'),
@@ -55,7 +55,7 @@ function JsonValidatorWrapper(successCb = () => {}, failureCb = () => {}) {
   };
 }
 
-submitButton.addEventListener(
+submitButton?.addEventListener(
   'click',
   JsonValidatorWrapper(
     validatedJson => {
