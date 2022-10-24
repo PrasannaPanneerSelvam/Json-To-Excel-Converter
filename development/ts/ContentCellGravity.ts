@@ -1,4 +1,4 @@
-import { setGlobalStyles } from './Utils.js';
+import { setGlobalStyles } from './Utils';
 
 function addContentPositionControl() {
   // const positionArrows = ['↖', '↑', '↗', '←', '•', '→', '↙', '↓', '↘'];

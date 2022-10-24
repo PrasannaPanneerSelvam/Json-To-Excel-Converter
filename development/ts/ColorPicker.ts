@@ -1,28 +1,30 @@
-import standardColors from '../jsonData/StandardColors.js';
-import customColors from '../jsonData/CustomColors.js';
-import additionalColors from '../jsonData/AdditionalColors.js';
+import standardColors from '../jsonData/StandardColors';
+import customColors from '../jsonData/CustomColors';
+import additionalColors from '../jsonData/AdditionalColors';
 
-let pickColorCallback = (color) => {
+type Maybe<T> = T | null
+
+let pickColorCallback = (color: string) => {
   console.log('Selected color', color);
 };
 
-function setPickColorCallback(inputCb) {
+function setPickColorCallback(inputCb: (color: string) => void) {
   pickColorCallback = inputCb;
 }
 
-function addPickColorEvent(gridItem, cssColor) {
-  gridItem.addEventListener('click', () => {
+function addPickColorEvent(gridItem: Maybe<HTMLElement>, cssColor: string) {
+  gridItem?.addEventListener('click', () => {
     pickColorCallback(cssColor);
   });
 }
 
 const maxColumns = 10;
 
-function addColorCellsInGrid(attachOn, contentArray) {
+function addColorCellsInGrid(attachOn: Maybe<HTMLElement>, contentArray: string[]) {
   const totalNumberOfValues = contentArray.length,
     numberOfRows =
-      parseInt(totalNumberOfValues / maxColumns) +
-      (totalNumberOfValues % maxColumns !== 0),
+      Math.floor(totalNumberOfValues / maxColumns) +
+      (totalNumberOfValues % maxColumns === 0 ? 0 : 1),
     numberOfColumns = maxColumns;
 
   for (let row = 0, index = 0; row < numberOfRows && index < totalNumberOfValues; row++) {
@@ -34,7 +36,7 @@ function addColorCellsInGrid(attachOn, contentArray) {
       addPickColorEvent(cellDiv, cssColor);
       rowDiv.appendChild(cellDiv);
     }
-    attachOn.appendChild(rowDiv);
+    attachOn?.appendChild(rowDiv);
   }
 }
 
@@ -52,7 +54,7 @@ function addColorGrids() {
   transparentCellDiv.classList.add('slash-bar');
 
   addPickColorEvent(transparentCellDiv, 'transparent');
-  primaryColorsGrid.lastChild.appendChild(transparentCellDiv);
+  primaryColorsGrid?.lastChild?.appendChild(transparentCellDiv);
 }
 
 addColorGrids();

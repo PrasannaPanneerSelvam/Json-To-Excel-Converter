@@ -1,17 +1,17 @@
-import * as JsonUtils from './JsonUtils.js';
-import * as TablePreviewDomManipulator from './TablePreviewDomManipulator.js';
+import * as JsonUtils from './JsonUtils';
+import * as TablePreviewDomManipulator from './TablePreviewDomManipulator';
 
 // TODO :: Remove this counter & add proper logic based on level, row & column
 let dummyCounter = 0;
-function getTableId(level, row, col) {
+function getTableId(level: number, row: number, col: number) {
   return dummyCounter++;
 }
 
 // DOM element variables
 let previewContainer = document.getElementById('preview-container'),
-  layoutsArray = [];
+  layoutsArray: HTMLElement[] = [];
 
-function createSpaceForTable(tableId, maxPartitions) {
+function createSpaceForTable(tableId: number, maxPartitions: number): [HTMLDivElement, HTMLTableElement] {
   // Table Header
   const tableTitle = document.createElement('div');
   tableTitle.classList.add('table-title');
@@ -33,12 +33,11 @@ function createSpaceForTable(tableId, maxPartitions) {
 }
 
 function injectContent(
-  inputObjArray,
-  flattenedKeys,
-  tableNode,
-  createNewTableCallback,
-  lazyLoadingCallback,
-  isVerticalTable
+  inputObjArray: object,
+  flattenedKeys: string[],
+  tableNode: HTMLTableElement,
+  callbacksObject: TablePreviewDomManipulator.CallbacksObject,
+  isVerticalTable: boolean
 ) {
   for (const [idx, item] of Object.entries(inputObjArray)) {
     // Adding a new row of content
@@ -50,10 +49,7 @@ function injectContent(
           ? tableNode.children[col]
           : tableRow;
         parentToBeAttached.append(
-          TablePreviewDomManipulator.addNewContentCell(value, idx, col, {
-            createNewTableCallback,
-            lazyLoadingCallback,
-          })
+          TablePreviewDomManipulator.addNewContentCell(value, parseInt(idx), col, callbacksObject)
         );
       });
 
@@ -61,8 +57,9 @@ function injectContent(
   }
 }
 
-function createSampleObject(objectList) {
-  function traverseNestedObjects(object, inputObject = {}) {
+// TODO :: Write this with proper types later
+function createSampleObject(objectList: any) {
+  function traverseNestedObjects(object: any, inputObject: any = {}) {
     for (const [key, value] of Object.entries(object))
       inputObject[key] =
         value && value.constructor === Object
@@ -80,11 +77,14 @@ function createSampleObject(objectList) {
   return sampleObject;
 }
 
-function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
+function createNewTable(inputObjOrObjectArray: JsonUtils.JsTypes, levelNo: number, rowNo: number, colNo: number) {
+  if (inputObjOrObjectArray == null) return;
+
   // Initial polyfill for an Object array
-  if (inputObjArray.constructor !== Array) {
-    inputObjArray = [inputObjArray];
-  }
+  const inputObjArray =
+    inputObjOrObjectArray.constructor === Array
+      ? inputObjOrObjectArray
+      : [inputObjOrObjectArray];
 
   // Initial processing of object
   const sampleObject = createSampleObject(inputObjArray) ?? {},
@@ -92,7 +92,7 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
     flattenedKeys = Object.keys(JsonUtils.flattenObj(sampleObject)),
     maxPartitions = headersObj.reduce((acc, val) => acc + val.length, 0),
     tableId = getTableId(levelNo, rowNo, colNo),
-    createNewTableCallback = (inputValue, r, c) =>
+    createNewTableCallback = (inputValue: JsonUtils.JsTypes, r: number, c: number) =>
       createNewTable(inputValue, levelNo + 1, r, c);
 
   // Creating a new table space
@@ -115,30 +115,29 @@ function createNewTable(inputObjArray, levelNo, rowNo, colNo) {
     inputObjArray,
     flattenedKeys,
     tableNode,
-    createNewTableCallback,
-    lazyLoadingCallback,
+    { createNewTableCallback, lazyLoadingCallback },
     isVerticalTable
   );
 
   return tableId;
 }
 
-function lazyLoadingCallback(cb) {
+function lazyLoadingCallback(cb: () => void) {
   layoutsArray = [];
   cb();
-  layoutsArray.forEach(table => previewContainer.appendChild(table));
+  layoutsArray.forEach(table => previewContainer?.appendChild(table));
   layoutsArray = [];
 }
 
-function createNewTableViews(inputObjArray) {
+function createNewTableViews(inputObjArray: JsonUtils.JsTypes) {
   lazyLoadingCallback(() => createNewTable(inputObjArray, 0, 0, 0));
 }
 
 function removeTables() {
-  [...previewContainer.children].forEach(i => previewContainer.removeChild(i));
+  Array.from(previewContainer?.children ?? []).forEach(i => previewContainer?.removeChild(i));
 }
 
-function resetTable(newObjArray) {
+function resetTable(newObjArray: JsonUtils.JsTypes) {
   removeTables();
   createNewTableViews(newObjArray);
 }
