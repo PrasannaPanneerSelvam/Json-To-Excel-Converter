@@ -1,5 +1,8 @@
-import * as TablePreviewGenerator from './PreviewGenerator.js';
-import * as ColorPicker from './ColorPicker.js';
+import {setGlobalStyles} from './Utils'
+import * as TablePreviewGenerator from './PreviewGenerator';
+import * as ColorPicker from './ColorPicker';
+import * as Gravity from './ContentCellGravity';
+
 
 const test = {
   StudentName: 'Bruce Wayne',
@@ -57,30 +60,24 @@ const v = [
 ];
 
 const ps = {
-  prasanna: [{ mobile: '8220125068', state: 'tamil nadu' }],
+  prasanna: [{ mobile: '8222122068', state: 'tamil nadu' }],
   hi: 123,
 };
 
-TablePreviewGenerator.createNewTableViews(test);
+TablePreviewGenerator.createNewTableViews(ps);
 
-// TablePreviewGenerator.createNewTableViews(ps);
-
-const setGlobalStyles = (function () {
-  const globalStyles = document.body.style;
-  return function (key, value) {
-    globalStyles.setProperty(key, value);
-  };
-})();
-
-const colorDropDownArray = [...document.getElementsByClassName('pick-color')];
+const colorDropDownArray = Array.from(document.getElementsByClassName('pick-color'));
 
 colorDropDownArray.forEach(dropDown => {
   const key = '--preview-' + dropDown.id;
   dropDown.addEventListener('click', () =>
     ColorPicker.setPickColorCallback(colorValue => {
       setGlobalStyles(key, colorValue);
+      console.log(key)
       // Resetting with empty callback
       ColorPicker.setPickColorCallback(() => {});
     })
   );
 });
+
+Gravity.addContentPositionControl();
