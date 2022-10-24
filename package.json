@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "Json-To-Excel-Converter",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Script & API to convert JSON date to tables / Excel sheets",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
